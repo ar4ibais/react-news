@@ -1,11 +1,14 @@
+import { isValidUrl } from "../../helpers/isValidUrl";
 import styles from "./styles.module.css";
 
 const Image = ({ image }) => {
-  return (
-    <div className={styles.wrapper}>
-      {image && image.length > 10 ? <img src={image} alt="news" className={styles.image} /> : null}
-    </div>
-  );
+    return (
+        <div className={styles.wrapper}>
+            {image && isValidUrl(image) ? (
+                <img src={image} alt="news" className={styles.image} />
+            ) : null}
+        </div>
+    );
 };
 
 export default Image;
