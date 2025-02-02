@@ -1,6 +1,7 @@
-import { getCategories } from "../../api/apiNews";
-import { useFetch } from "../../helpers/hooks/useFetch";
-import { CategoriesApiResponse, IFilters } from "../../interfaces";
+import { IFilters } from "../../interfaces";
+import { useAppDispatch } from "../../store";
+import { useGetCategoriesQuery } from "../../store/services/newsApi";
+import { setFilters } from "../../store/slices/newsSlice";
 import Categories from "../Categories";
 import Search from "../Search";
 import Slider from "../Slider";
@@ -8,13 +9,11 @@ import styles from "./styles.module.css";
 
 interface Props {
     filters: IFilters;
-    changeFilter: (key: string, value: string | null | undefined) => void;
 }
 
-const NewsFilters = ({ filters, changeFilter }: Props) => {
-    const { data: dataCategories } = useFetch<CategoriesApiResponse, null>(
-        getCategories
-    );
+const NewsFilters = ({ filters }: Props) => {
+    const dispatch = useAppDispatch();
+    const { data: dataCategories } = useGetCategoriesQuery();
 
     return (
         <div className={styles.filters}>
@@ -24,7 +23,12 @@ const NewsFilters = ({ filters, changeFilter }: Props) => {
                         categories={dataCategories.categories}
                         selectedCategory={filters.category}
                         setSelectedCategory={(category) =>
-                            changeFilter("category", category)
+                            dispatch(
+                                setFilters({
+                                    key: "category",
+                                    value: category,
+                                })
+                            )
                         }
                     />
                 </Slider>
@@ -32,7 +36,14 @@ const NewsFilters = ({ filters, changeFilter }: Props) => {
 
             <Search
                 keywords={filters.keywords}
-                setKeywords={(keywords) => changeFilter("keywords", keywords)}
+                setKeywords={(keywords) =>
+                    dispatch(
+                        setFilters({
+                            key: "keywords",
+                            value: keywords,
+                        })
+                    )
+                }
             />
         </div>
     );
